@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccessNature - Accessible Tracker Interface</title>
+    <style>
+        /* Reset and accessibility foundations */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Skip links for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 10000;
+            border-radius: 4px;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Header with live status */
+        .status-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            z-index: 2000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #333;
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .status-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .status-label {
+            font-size: 0.8rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Map container with proper labeling */
+        .map-container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 200px;
+            background: #2d2d2d;
+            border: 2px solid #444;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        /* Primary Action Zone */
+        .primary-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.95) 20%);
+            padding: 30px 20px 20px;
+            z-index: 2000;
+        }
+
+        .tracking-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Primary tracking button - state-based */
+        .primary-button {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid;
+            background: transparent;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .primary-button:focus {
+            outline: 3px solid #FFD700;
+            outline-offset: 4px;
+        }
+
+        /* Start state */
+        .primary-button.start {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .primary-button.start:hover,
+        .primary-button.start:focus-visible {
+            background: rgba(76, 175, 80, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Tracking state */
+        .primary-button.tracking {
+            border-color: #FF5722;
+            color: #FF5722;
+            animation: pulse 2s infinite;
+        }
+
+        .primary-button.tracking:hover,
+        .primary-button.tracking:focus-visible {
+            background: rgba(255, 87, 34, 0.1);
+        }
+
+        /* Paused state */
+        .primary-button.paused {
+            border-color: #FFC107;
+            color: #FFC107;
+        }
+
+        .primary-button.paused:hover,
+        .primary-button.paused:focus-visible {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        /* Secondary tracking controls */
+        .secondary-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #666;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ccc;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .secondary-button:focus {
+            outline: 2px solid #FFD700;
+            outline-offset: 2px;
+        }
+
+        .secondary-button:hover,
+        .secondary-button:focus-visible {
+            border-color: #999;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .secondary-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Accessibility Survey Button - Prominent */
+        .accessibility-cta {
+            background: linear-gradient(135deg, #9C27B0 0%, #673AB7 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 56px;
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        }
+
+        .accessibility-cta:focus {
+            outline: 3px solid #FFD700;
+            outline-offset: 2px;
+        }
+
+        .accessibility-cta:hover,
+        .accessibility-cta:focus-visible {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        .accessibility-cta:active {
+            transform: translateY(0);
+        }
+
+        .accessibility-icon {
+            font-size: 1.4rem;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+        }
+
+        /* Context-sensitive actions */
+        .context-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .context-button {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ccc;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+        }
+
+        .context-button:focus {
+            outline: 2px solid #FFD700;
+            outline-offset: 2px;
+        }
+
+        .context-button:hover,
+        .context-button:focus-visible {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+        }
+
+        /* Visual state indicators */
+        .state-indicator {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .state-idle { background: #666; color: #ccc; }
+        .state-tracking { background: #4CAF50; color: white; }
+        .state-paused { background: #FF9800; color: white; }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .primary-button {
+                border-width: 6px;
+            }
+            .accessibility-cta {
+                border: 3px solid white;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .primary-button {
+                transition: none;
+            }
+            .primary-button.tracking {
+                animation: none;
+            }
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .status-header {
+                padding: 10px 15px;
+            }
+            
+            .status-item {
+                font-size: 0.8rem;
+            }
+            
+            .status-value {
+                font-size: 1.1rem;
+            }
+            
+            .primary-actions {
+                padding: 25px 15px 15px;
+            }
+            
+            .primary-button {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .secondary-button {
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip navigation for screen readers -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#map-region" class="skip-link">Skip to map</a>
+
+    <!-- Live status header -->
+    <header class="status-header" role="banner">
+        <div class="status-item">
+            <span class="status-value" id="timer-display" aria-live="polite">00:00:00</span>
+            <span class="status-label">Time</span>
+        </div>
+        
+        <div class="state-indicator state-idle" id="tracking-state" aria-live="polite">
+            Ready
+        </div>
+        
+        <div class="status-item">
+            <span class="status-value" id="distance-display" aria-live="polite">0.00 km</span>
+            <span class="status-label">Distance</span>
+        </div>
+    </header>
+
+    <!-- Map region -->
+    <div class="map-container" 
+         role="application" 
+         aria-label="Interactive trail map"
+         id="map-region"
+         tabindex="0">
+        <div class="map-placeholder">
+            Interactive Map Will Load Here
+            <span class="sr-only">
+                Use arrow keys to explore map. Press M for map controls menu.
+            </span>
+        </div>
+    </div>
+
+    <!-- Primary action zone -->
+    <main class="primary-actions" id="main-content" role="main">
+        
+        <!-- Core tracking controls -->
+        <div class="tracking-controls" role="group" aria-labelledby="tracking-label">
+            <h2 id="tracking-label" class="sr-only">Tracking Controls</h2>
+            
+            <!-- Secondary: Pause/Resume -->
+            <button class="secondary-button" 
+                    id="pause-btn"
+                    disabled
+                    aria-label="Pause tracking"
+                    title="Pause current tracking session">
+                <span aria-hidden="true">⏸</span>
+                <span class="sr-only">Pause</span>
+            </button>
+
+            <!-- Primary: Start/Stop -->
+            <button class="primary-button start" 
+                    id="primary-tracking-btn"
+                    aria-label="Start tracking trail"
+                    aria-describedby="tracking-help">
+                <span aria-hidden="true">▶</span>
+                <span class="sr-only">Start Tracking</span>
+            </button>
+
+            <!-- Secondary: Stop -->
+            <button class="secondary-button" 
+                    id="stop-btn"
+                    disabled
+                    aria-label="Stop tracking and save"
+                    title="Stop tracking and proceed to save">
+                <span aria-hidden="true">⏹</span>
+                <span class="sr-only">Stop</span>
+            </button>
+        </div>
+
+        <div id="tracking-help" class="sr-only">
+            Press Enter or Space to start GPS tracking. You can pause or stop anytime using the controls.
+        </div>
+
+        <!-- Accessibility Survey CTA -->
+        <button class="accessibility-cta" 
+                id="accessibility-btn"
+                aria-label="Document trail accessibility features"
+                aria-describedby="accessibility-help">
+            <span class="accessibility-icon" aria-hidden="true">♿</span>
+            <span>Document Accessibility</span>
+        </button>
+
+        <div id="accessibility-help" class="sr-only">
+            Open comprehensive accessibility survey to document trail features like surface type, wheelchair access, and facilities.
+        </div>
+
+        <!-- Context-sensitive actions -->
+        <div class="context-actions" 
+             role="group" 
+             aria-labelledby="context-label">
+            <h3 id="context-label" class="sr-only">Additional Actions</h3>
+            
+            <button class="context-button" 
+                    id="camera-btn"
+                    aria-label="Take photo"
+                    title="Capture photo with GPS location">
+                📷 Photo
+            </button>
+            
+            <button class="context-button" 
+                    id="note-btn"
+                    aria-label="Add text note"
+                    title="Add text note with GPS location">
+                📝 Note
+            </button>
+            
+            <button class="context-button" 
+                    id="menu-btn"
+                    aria-label="Open menu"
+                    title="Access routes, settings, and export options"
+                    aria-expanded="false"
+                    aria-haspopup="menu">
+                ⋮ Menu
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Accessibility-focused tracking control logic
+        class AccessibleTrackingControls {
+            constructor() {
+                this.state = 'idle'; // idle, tracking, paused
+                this.timer = 0;
+                this.distance = 0;
+                this.timerInterval = null;
+                
+                this.initializeControls();
+                this.setupKeyboardShortcuts();
+                this.announceAppReady();
+            }
+
+            initializeControls() {
+                const primaryBtn = document.getElementById('primary-tracking-btn');
+                const pauseBtn = document.getElementById('pause-btn');
+                const stopBtn = document.getElementById('stop-btn');
+                const accessibilityBtn = document.getElementById('accessibility-btn');
+
+                primaryBtn.addEventListener('click', () => this.toggleTracking());
+                pauseBtn.addEventListener('click', () => this.pauseTracking());
+                stopBtn.addEventListener('click', () => this.stopTracking());
+                accessibilityBtn.addEventListener('click', () => this.openAccessibilityForm());
+
+                // Keyboard event listeners
+                primaryBtn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.toggleTracking();
+                    }
+                });
+            }
+
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    // Only process if not in an input field
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                    switch(e.key.toLowerCase()) {
+                        case ' ':
+                            e.preventDefault();
+                            this.toggleTracking();
+                            break;
+                        case 'p':
+                            e.preventDefault();
+                            this.pauseTracking();
+                            break;
+                        case 'a':
+                            e.preventDefault();
+                            this.openAccessibilityForm();
+                            break;
+                        case 'c':
+                            e.preventDefault();
+                            document.getElementById('camera-btn').click();
+                            break;
+                        case 'escape':
+                            if (this.state === 'tracking' || this.state === 'paused') {
+                                this.stopTracking();
+                            }
+                            break;
+                    }
+                });
+            }
+
+            toggleTracking() {
+                if (this.state === 'idle') {
+                    this.startTracking();
+                } else if (this.state === 'paused') {
+                    this.resumeTracking();
+                }
+            }
+
+            startTracking() {
+                this.state = 'tracking';
+                this.updateUI();
+                this.startTimer();
+                this.announceStateChange('Tracking started');
+                
+                // Request GPS permission and start location tracking here
+                console.log('🎯 Starting GPS tracking...');
+            }
+
+            pauseTracking() {
+                if (this.state === 'tracking') {
+                    this.state = 'paused';
+                    this.updateUI();
+                    this.pauseTimer();
+                    this.announceStateChange('Tracking paused');
+                }
+            }
+
+            resumeTracking() {
+                if (this.state === 'paused') {
+                    this.state = 'tracking';
+                    this.updateUI();
+                    this.resumeTimer();
+                    this.announceStateChange('Tracking resumed');
+                }
+            }
+
+            stopTracking() {
+                this.state = 'idle';
+                this.updateUI();
+                this.stopTimer();
+                this.announceStateChange('Tracking stopped');
+                
+                // Show save dialog
+                setTimeout(() => {
+                    this.showSaveDialog();
+                }, 500);
+            }
+
+            updateUI() {
+                const primaryBtn = document.getElementById('primary-tracking-btn');
+                const pauseBtn = document.getElementById('pause-btn');
+                const stopBtn = document.getElementById('stop-btn');
+                const stateIndicator = document.getElementById('tracking-state');
+
+                // Update primary button
+                primaryBtn.className = 'primary-button ' + this.state;
+                
+                switch(this.state) {
+                    case 'idle':
+                        primaryBtn.innerHTML = '<span aria-hidden="true">▶</span><span class="sr-only">Start Tracking</span>';
+                        primaryBtn.setAttribute('aria-label', 'Start tracking trail');
+                        pauseBtn.disabled = true;
+                        stopBtn.disabled = true;
+                        stateIndicator.className = 'state-indicator state-idle';
+                        stateIndicator.textContent = 'Ready';
+                        break;
+                        
+                    case 'tracking':
+                        primaryBtn.innerHTML = '<span aria-hidden="true">⏸</span><span class="sr-only">Pause Tracking</span>';
+                        primaryBtn.setAttribute('aria-label', 'Pause tracking');
+                        pauseBtn.disabled = false;
+                        stopBtn.disabled = false;
+                        stateIndicator.className = 'state-indicator state-tracking';
+                        stateIndicator.textContent = 'Tracking';
+                        break;
+                        
+                    case 'paused':
+                        primaryBtn.innerHTML = '<span aria-hidden="true">▶</span><span class="sr-only">Resume Tracking</span>';
+                        primaryBtn.setAttribute('aria-label', 'Resume tracking');
+                        pauseBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        stateIndicator.className = 'state-indicator state-paused';
+                        stateIndicator.textContent = 'Paused';
+                        break;
+                }
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.timer++;
+                    this.updateTimerDisplay();
+                    
+                    // Simulate distance increase
+                    this.distance += 0.001;
+                    this.updateDistanceDisplay();
+                }, 1000);
+            }
+
+            pauseTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+            }
+
+            resumeTimer() {
+                this.startTimer();
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            updateTimerDisplay() {
+                const hours = Math.floor(this.timer / 3600);
+                const minutes = Math.floor((this.timer % 3600) / 60);
+                const seconds = this.timer % 60;
+                
+                const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('timer-display').textContent = display;
+            }
+
+            updateDistanceDisplay() {
+                const display = this.distance < 1 
+                    ? `${(this.distance * 1000).toFixed(0)} m`
+                    : `${this.distance.toFixed(2)} km`;
+                document.getElementById('distance-display').textContent = display;
+            }
+
+            openAccessibilityForm() {
+                this.announceAction('Opening accessibility survey');
+                // This would integrate with your existing accessibility form
+                console.log('🔍 Opening accessibility form...');
+            }
+
+            showSaveDialog() {
+                const message = `Tracking session complete. Time: ${document.getElementById('timer-display').textContent}, Distance: ${document.getElementById('distance-display').textContent}. Would you like to save this route?`;
+                
+                if (confirm(message)) {
+                    this.announceAction('Route saved successfully');
+                    // Reset for next session
+                    this.timer = 0;
+                    this.distance = 0;
+                    this.updateTimerDisplay();
+                    this.updateDistanceDisplay();
+                }
+            }
+
+            announceStateChange(message) {
+                // Announce to screen readers
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'assertive');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                
+                document.body.appendChild(announcement);
+                setTimeout(() => document.body.removeChild(announcement), 1000);
+            }
+
+            announceAction(message) {
+                // For less critical announcements
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                
+                document.body.appendChild(announcement);
+                setTimeout(() => document.body.removeChild(announcement), 1000);
+            }
+
+            announceAppReady() {
+                setTimeout(() => {
+                    this.announceAction('Access Nature tracker ready. Press Space to start tracking or A to open accessibility survey.');
+                }, 1000);
+            }
+        }
+
+        // Initialize the accessible tracking controls
+        document.addEventListener('DOMContentLoaded', () => {
+            new AccessibleTrackingControls();
+        });
+    </script>
+</body>
+</html>
