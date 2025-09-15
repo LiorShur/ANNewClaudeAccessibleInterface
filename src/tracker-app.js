@@ -290,7 +290,8 @@ class EnhancedTrackingInterface {
     const headingDisplay = document.getElementById('compass-heading');
     
     if (needle) {
-      needle.style.transform = `translate(-50%, 0) rotate(${this.heading}deg)`;
+      // Fixed: Use transform with proper centering
+      needle.style.transform = `translate(-50%, -50%) rotate(${this.heading}deg)`;
     }
     
     if (headingDisplay) {
@@ -305,25 +306,48 @@ class EnhancedTrackingInterface {
     return directions[index];
   }
 
-  toggleMapRotation() {
+  async toggleMapRotation() {
     console.log('🔄 Toggling map rotation...');
     
-    // Use your existing compass controller
-    this.compassController.toggleRotation();
-    
-    // Update UI
-    this.isMapRotationEnabled = this.compassController.isRotationActive();
-    const toggle = document.getElementById('mapRotationToggle');
-    
-    if (toggle) {
-      if (this.isMapRotationEnabled) {
-        toggle.classList.add('active');
-        toggle.setAttribute('aria-label', 'Disable map rotation');
-        this.announceToScreenReader('Map rotation enabled');
-      } else {
-        toggle.classList.remove('active');
-        toggle.setAttribute('aria-label', 'Enable map rotation');
-        this.announceToScreenReader('Map rotation disabled');
+    try {
+      // Use your existing compass controller
+      await this.compassController.toggleRotation();
+      
+      // Update our state to match the compass controller
+      this.isMapRotationEnabled = this.compassController.isRotationActive();
+      
+      // Fixed: Update UI with correct color states
+      const toggle = document.getElementById('mapRotationToggle');
+      
+      if (toggle) {
+        if (this.isMapRotationEnabled) {
+          toggle.classList.add('active');
+          toggle.setAttribute('aria-label', 'Disable map rotation');
+          toggle.title = 'Disable map rotation';
+          this.announceToScreenReader('Map rotation enabled - map will follow device orientation');
+          console.log('✅ Map rotation enabled');
+        } else {
+          toggle.classList.remove('active');
+          toggle.setAttribute('aria-label', 'Enable map rotation');
+          toggle.title = 'Enable map rotation with device orientation';
+          this.announceToScreenReader('Map rotation disabled - map orientation locked');
+          console.log('❌ Map rotation disabled');
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ Map rotation toggle failed:', error);
+      
+      // Fallback: manually toggle the UI state
+      this.isMapRotationEnabled = !this.isMapRotationEnabled;
+      const toggle = document.getElementById('mapRotationToggle');
+      
+      if (toggle) {
+        if (this.isMapRotationEnabled) {
+          toggle.classList.add('active');
+        } else {
+          toggle.classList.remove('active');
+        }
       }
     }
   }
