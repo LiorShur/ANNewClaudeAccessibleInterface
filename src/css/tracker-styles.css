@@ -52,7 +52,7 @@
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   height: 60px; /* FIXED: Set specific height */
-  min-width: 220px; /* FIXED: Prevent width changes */
+  min-width: 240px; /* FIXED: Prevent width changes */
 }
 
 .status-item {
@@ -587,7 +587,7 @@
     gap: 20px;
     top: 8px;
     height: 60px;
-    min-width: 220px;
+    min-width: 240px;
   }
   
   .compass-section {
@@ -671,7 +671,7 @@
     gap: 15px;
     padding: 5px 15px;
     height: 60px;
-    min-width: 220px;
+    min-width: 240px;
   }
   
   .compass-section {
