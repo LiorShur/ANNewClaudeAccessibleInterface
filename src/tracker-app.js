@@ -287,17 +287,36 @@ class EnhancedTrackingInterface {
 
   updateCompassDisplay() {
     const needle = document.getElementById('compass-needle');
-    const headingDisplay = document.getElementById('compass-heading');
+  const headingDisplay = document.getElementById('compass-heading');
+  
+  console.log('Updating compass - heading:', this.heading);
+  
+  if (needle) {
+    // CRITICAL FIX: Use the correct transform
+    const transform = `translate(-50%, -50%) rotate(${this.heading}deg)`;
+    needle.style.transform = transform;
     
-    if (needle) {
-      // Fixed: Use transform with proper centering
-      needle.style.transform = `translate(-50%, -50%) rotate(${this.heading}deg)`;
-    }
+    // Debug: Log the applied transform
+    console.log('Applied transform:', transform);
+    console.log('Needle element:', needle);
+    console.log('Computed styles:', window.getComputedStyle(needle));
     
-    if (headingDisplay) {
-      const cardinalDirection = this.getCardinalDirection(this.heading);
-      headingDisplay.textContent = `${this.heading}° ${cardinalDirection}`;
-    }
+  } else {
+    console.error('Compass needle element not found!');
+  }
+  
+  if (headingDisplay) {
+    const cardinalDirection = this.getCardinalDirection(this.heading);
+    const displayText = `${this.heading}° ${cardinalDirection}`;
+    headingDisplay.textContent = displayText;
+    
+    // Debug: Log the heading display
+    console.log('Heading display text:', displayText);
+    console.log('Heading element:', headingDisplay);
+    
+  } else {
+    console.error('Compass heading display element not found!');
+  }
   }
 
   getCardinalDirection(degrees) {
