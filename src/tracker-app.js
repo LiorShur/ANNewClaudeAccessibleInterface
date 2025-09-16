@@ -325,55 +325,77 @@ class EnhancedTrackingInterface {
     return directions[index];
   }
 
-  async toggleMapRotation() {
-    console.log('🔄 Toggling map rotation...');
+  // async toggleMapRotation() {
+  //   console.log('🔄 Toggling map rotation...');
     
-    try {
-      // Use your existing compass controller
-      await this.compassController.toggleRotation();
+  //   try {
+  //     // Use your existing compass controller
+  //     await this.compassController.toggleRotation();
       
-      // Update our state to match the compass controller
-      this.isMapRotationEnabled = this.compassController.isRotationActive();
+  //     // Update our state to match the compass controller
+  //     this.isMapRotationEnabled = this.compassController.isRotationActive();
       
-      // Fixed: Update UI with correct color states
-      const toggle = document.getElementById('mapRotationToggle');
+  //     // Fixed: Update UI with correct color states
+  //     const toggle = document.getElementById('mapRotationToggle');
       
-      if (toggle) {
-        if (this.isMapRotationEnabled) {
-          toggle.classList.add('active');
-          toggle.setAttribute('aria-label', 'Disable map rotation');
-          toggle.title = 'Disable map rotation';
-          this.announceToScreenReader('Map rotation enabled - map will follow device orientation');
-          console.log('✅ Map rotation enabled');
-          // Hook into compass controller's orientation updates
+  //     if (toggle) {
+  //       if (this.isMapRotationEnabled) {
+  //         toggle.classList.add('active');
+  //         toggle.setAttribute('aria-label', 'Disable map rotation');
+  //         toggle.title = 'Disable map rotation';
+  //         this.announceToScreenReader('Map rotation enabled - map will follow device orientation');
+  //         console.log('✅ Map rotation enabled');
+  //         // Hook into compass controller's orientation updates
+  //       this.connectToCompassController();
+  //       } else {
+  //         toggle.classList.remove('active');
+  //         toggle.setAttribute('aria-label', 'Enable map rotation');
+  //         toggle.title = 'Enable map rotation with device orientation';
+  //         this.announceToScreenReader('Map rotation disabled - map orientation locked');
+  //         console.log('❌ Map rotation disabled');
+  //         this.disconnectFromCompassController();
+  //       }
+  //     }
+      
+  //   } catch (error) {
+  //     console.error('❌ Map rotation toggle failed:', error);
+      
+  //     // Fallback: manually toggle the UI state
+  //     this.isMapRotationEnabled = !this.isMapRotationEnabled;
+  //     const toggle = document.getElementById('mapRotationToggle');
+      
+  //     if (toggle) {
+  //       if (this.isMapRotationEnabled) {
+  //         toggle.classList.add('active');
+  //       } else {
+  //         toggle.classList.remove('active');
+  //       }
+  //     }
+  //   }
+  // }
+async toggleMapRotation() {
+  console.log('Toggling map rotation...');
+  
+  try {
+    await this.compassController.toggleRotation();
+    this.isMapRotationEnabled = this.compassController.isRotationActive();
+    
+    const toggle = document.getElementById('mapRotationToggle');
+    
+    if (toggle) {
+      if (this.isMapRotationEnabled) {
+        toggle.classList.add('active');
+        // Hook into compass controller's orientation updates
         this.connectToCompassController();
-        } else {
-          toggle.classList.remove('active');
-          toggle.setAttribute('aria-label', 'Enable map rotation');
-          toggle.title = 'Enable map rotation with device orientation';
-          this.announceToScreenReader('Map rotation disabled - map orientation locked');
-          console.log('❌ Map rotation disabled');
-          this.disconnectFromCompassController();
-        }
-      }
-      
-    } catch (error) {
-      console.error('❌ Map rotation toggle failed:', error);
-      
-      // Fallback: manually toggle the UI state
-      this.isMapRotationEnabled = !this.isMapRotationEnabled;
-      const toggle = document.getElementById('mapRotationToggle');
-      
-      if (toggle) {
-        if (this.isMapRotationEnabled) {
-          toggle.classList.add('active');
-        } else {
-          toggle.classList.remove('active');
-        }
+      } else {
+        toggle.classList.remove('active');
+        this.disconnectFromCompassController();
       }
     }
+  } catch (error) {
+    console.error('Map rotation toggle failed:', error);
   }
-
+}
  connectToCompassController() {
   // Store the original handler so we can restore it later
   if (!this.originalCompassHandler) {
