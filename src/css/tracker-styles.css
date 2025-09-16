@@ -149,8 +149,8 @@
   backdrop-filter: blur(15px) !important;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace !important;
   /* CRITICAL: Fixed dimensions to prevent jumping */
-  min-width: 70px !important;
-  max-width: 70px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
   text-align: center !important;
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
