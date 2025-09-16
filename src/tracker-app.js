@@ -345,12 +345,15 @@ class EnhancedTrackingInterface {
           toggle.title = 'Disable map rotation';
           this.announceToScreenReader('Map rotation enabled - map will follow device orientation');
           console.log('✅ Map rotation enabled');
+          // Hook into compass controller's orientation updates
+        this.connectToCompassController();
         } else {
           toggle.classList.remove('active');
           toggle.setAttribute('aria-label', 'Enable map rotation');
           toggle.title = 'Enable map rotation with device orientation';
           this.announceToScreenReader('Map rotation disabled - map orientation locked');
           console.log('❌ Map rotation disabled');
+          this.disconnectFromCompassController();
         }
       }
       
@@ -370,6 +373,40 @@ class EnhancedTrackingInterface {
       }
     }
   }
+
+ connectToCompassController() {
+  // Store the original handler so we can restore it later
+  if (!this.originalCompassHandler) {
+    this.originalCompassHandler = this.compassController.handleOrientationChange;
+  }
+  
+  // Override the compass controller's handleOrientationChange
+  this.compassController.handleOrientationChange = (event) => {
+    // Call original handler for map rotation
+    this.originalCompassHandler.call(this.compassController, event);
+    
+    // Update needle display
+    if (event.alpha !== null) {
+      let newHeading = Math.round(360 - event.alpha);
+      if (newHeading < 0) newHeading += 360;
+      if (newHeading >= 360) newHeading -= 360;
+      
+      this.heading = newHeading;
+      this.updateCompassDisplay();
+    }
+  };
+}
+
+disconnectFromCompassController() {
+  // Restore the original handler
+  if (this.originalCompassHandler) {
+    this.compassController.handleOrientationChange = this.originalCompassHandler;
+  }
+  
+  // Optionally reset needle to north or stop updating
+  this.heading = 0;
+  this.updateCompassDisplay();
+}
 
   setupKeyboardShortcuts() {
     console.log('⌨️ Setting up keyboard shortcuts...');
