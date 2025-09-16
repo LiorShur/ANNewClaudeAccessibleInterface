@@ -33,7 +33,7 @@
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   height: 60px; /* FIXED: Set specific height */
-  min-width: 200px; /* FIXED: Prevent width changes */
+  min-width: 220px; /* FIXED: Prevent width changes */
 }
 
 .status-item {
@@ -209,7 +209,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: rgba(0, 0, 0); /* ADDED: Black background */
+  background: rgba(0, 0, 0, 0.85); /* ADDED: Black background */
   padding: 15px 25px; /* ADDED: Padding */
   border-radius: 50px; /* ADDED: Rounded background */
   backdrop-filter: blur(12px); /* ADDED: Blur effect */
