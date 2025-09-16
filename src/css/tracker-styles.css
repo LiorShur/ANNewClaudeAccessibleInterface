@@ -115,7 +115,7 @@
   position: absolute !important;
   /* CRITICAL: Position relative to needle center */
   top: -10px !important;
-  left: -7px !important;
+  left: -4px !important;
   width: 0 !important;
   height: 0 !important;
   border-left: 7px solid transparent !important;
@@ -129,7 +129,7 @@
   position: absolute !important;
   /* CRITICAL: Position relative to needle center */
   bottom: -10px !important;
-  left: -5px !important;
+  left: -2.5px !important;
   width: 0 !important;
   height: 0 !important;
   border-left: 5px solid transparent !important;
