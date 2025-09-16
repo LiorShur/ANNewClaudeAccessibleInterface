@@ -19,19 +19,21 @@
 /* Status header - minimal and translucent */
 .status-header {
   position: fixed;
-  top: 15px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
-  padding: 12px 28px;
-  border-radius: 30px;
+  padding: 8px 24px; /* REDUCED: Was 12px 28px */
+  border-radius: 25px;
   z-index: 2000;
   display: flex;
-  gap: 35px;
+  gap: 30px;
   align-items: center;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 60px; /* FIXED: Set specific height */
+  min-width: 200px; /* FIXED: Prevent width changes */
 }
 
 .status-item {
@@ -59,20 +61,22 @@
 /* Enhanced compass section - centered under status */
 .compass-section {
   position: fixed;
-  top: 85px;
+  top: 75px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  width: 100px; /* FIXED: Set fixed width */
+  height: 100px; /* FIXED: Set fixed height */
 }
 
 .compass-container {
   position: relative;
-  width: 65px;
-  height: 65px;
+  width: 60px;
+  height: 60px;
   background: rgba(0, 0, 0, 0.85);
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
@@ -81,16 +85,18 @@
   justify-content: center;
   backdrop-filter: blur(12px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0; /* FIXED: Prevent shrinking */
 }
 
 /* Modern compass needle - red/white triangular */
 .compass-needle {
   position: absolute;
-  width: 3px;
-  height: 45px;
-  top: 10px;
+  top: 50%;
   left: 50%;
-  transform-origin: 50% 80%;
+  width: 3px;
+  height: 40px;
+  transform: translate(-50%, -50%); /* FIXED: Proper centering */
+  transform-origin: 50% 50%; /* FIXED: Center rotation point */
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -139,11 +145,11 @@
 /* Map rotation toggle - top right */
 .map-rotation-toggle {
   position: fixed;
-  top: 15px;
+  top: 10px; /* ALIGNED: With status header */
   right: 15px;
   z-index: 2000;
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px; /* MATCHES: Status header height */
   background: rgba(0, 0, 0, 0.85);
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
@@ -154,7 +160,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(12px);
   color: #fff;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -178,13 +184,19 @@
 /* Primary action controls - enhanced and properly aligned */
 .primary-controls {
   position: fixed;
-  bottom: 130px;
+  bottom: 110px; /* MOVED UP: Was 130px */
   left: 50%;
   transform: translateX(-50%);
   z-index: 2000;
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.7); /* ADDED: Black background */
+  padding: 15px 25px; /* ADDED: Padding */
+  border-radius: 50px; /* ADDED: Rounded background */
+  backdrop-filter: blur(12px); /* ADDED: Blur effect */
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5); /* ADDED: Shadow */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* ADDED: Border */
 }
 
 .control-button {
@@ -295,19 +307,20 @@
 /* Bottom menu - minimal and clean */
 .bottom-menu {
   position: fixed;
-  bottom: 25px;
+  bottom: 15px; /* MOVED UP: Was 25px */
   left: 50%;
   transform: translateX(-50%);
   z-index: 2000;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   background: rgba(0, 0, 0, 0.85);
-  padding: 12px 25px;
-  border-radius: 30px;
+  padding: 8px 20px; /* REDUCED: Was 12px 25px */
+  border-radius: 25px;
   backdrop-filter: blur(12px);
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 80px; /* FIXED: Set specific height */
 }
 
 .menu-button {
@@ -532,84 +545,34 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .status-header {
-    padding: 10px 22px;
-    gap: 25px;
-    top: 10px;
+    padding: 6px 18px;
+    gap: 20px;
+    top: 8px;
+    height: 60px;
+    min-width: 220px;
   }
   
   .compass-section {
-    top: 75px;
-  }
-  
-  .primary-controls {
-    bottom: 110px;
-    gap: 20px;
-  }
-  
-  .control-button {
-    width: 65px;
-    height: 65px;
-    font-size: 1.7rem;
-  }
-  
-  .play-pause-btn {
-    width: 75px;
-    height: 75px;
-  }
-  
-  .bottom-menu {
-    padding: 10px 20px;
-    gap: 15px;
-    bottom: 20px;
+    top: 65px; /* ADJUSTED: For smaller top banner */
+    width: 80px;
+    height: 80px;
   }
   
   .compass-container {
-    width: 55px;
-    height: 55px;
-  }
-  
-  .compass-needle {
-    height: 35px;
-    top: 10px;
-  }
-  
-  .compass-needle::before {
-    border-bottom-width: 16px;
-    border-left-width: 5px;
-    border-right-width: 5px;
-    left: -5px;
-  }
-  
-  .compass-needle::after {
-    border-top-width: 12px;
-    border-left-width: 3px;
-    border-right-width: 3px;
-    left: -3px;
-  }
-  
-  .map-rotation-toggle {
     width: 50px;
     height: 50px;
-    top: 10px;
-    right: 10px;
-  }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-  .status-header {
-    gap: 20px;
-    padding: 8px 18px;
   }
   
-  .status-value {
-    font-size: 1.1rem;
+  .primary-controls {
+    bottom: 90px; /* ADJUSTED: To avoid bottom menu */
+    gap: 15px;
+    padding: 12px 20px;
   }
   
   .control-button {
     width: 60px;
     height: 60px;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
   
   .play-pause-btn {
@@ -617,7 +580,55 @@
     height: 70px;
   }
   
+  .bottom-menu {
+    padding: 6px 16px;
+    gap: 14px;
+    bottom: 12px;
+    height: 70px;
+  }
+  
+  .map-rotation-toggle {
+    width: 45px;
+    height: 45px;
+    top: 8px;
+    right: 12px;
+    font-size: 1.2rem;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .status-header {
+    gap: 15px;
+    padding: 5px 15px;
+    height: 60px;
+    min-width: 220px;
+  }
+  
+  .compass-section {
+    top: 55px;
+  }
+  
+  .control-button {
+    width: 55px;
+    height: 55px;
+    font-size: 1.4rem;
+  }
+  
+  .play-pause-btn {
+    width: 65px;
+    height: 65px;
+  }
+  
   .primary-controls {
-    gap: 18px;
+    gap: 12px;
+    bottom: 85px;
+    padding: 10px 18px;
+  }
+  
+  .bottom-menu {
+    height: 70px;
+    padding: 5px 14px;
+    gap: 12px;
   }
 }
