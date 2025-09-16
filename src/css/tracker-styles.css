@@ -1,7 +1,7 @@
 /* Enhanced Tracker Styles - Add to your existing CSS files */
 
 /* Full-screen map - maximized coverage */
-#map, #map-container {
+.map, .map-container {
   height: 100%;
   width: 100%;
   position: absolute;
@@ -9,7 +9,7 @@
   left: 0;
 }
 
-#map-container {
+.map-container {
       width: 200%;
       height: 200%;
       position: absolute;
