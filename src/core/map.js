@@ -318,5 +318,4 @@ export class MapController {
       mapContainer.style.transform = 'rotate(0deg)';
     }
   }
-
 }

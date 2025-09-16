@@ -83,7 +83,7 @@
   gap: 8px;
 }
 
-#compass {
+/* #compass {
   position: fixed;
   top: 15px;
   right: 15px;
@@ -96,7 +96,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 .overlay {
   position: fixed;

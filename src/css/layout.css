@@ -137,7 +137,7 @@ html, body {
 }
 
 /* Compass - positioned over map */
-#compass {
+/* #compass {
   position: fixed;
   top: 100px;
   right: 15px;
@@ -155,7 +155,7 @@ html, body {
 #compass:focus {
   outline: 3px solid #FFD700;
   outline-offset: 2px;
-}
+} */
 
 /* Cloud sync indicator */
 .cloud-sync-indicator {

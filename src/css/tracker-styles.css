@@ -22,7 +22,7 @@
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0);
   backdrop-filter: blur(12px);
   padding: 8px 24px; /* REDUCED: Was 12px 28px */
   border-radius: 25px;
@@ -33,7 +33,7 @@
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   height: 60px; /* FIXED: Set specific height */
-  min-width: 240px; /* FIXED: Prevent width changes */
+  min-width: 200px; /* FIXED: Prevent width changes */
 }
 
 .status-item {
@@ -115,7 +115,7 @@
   position: absolute !important;
   /* CRITICAL: Position relative to needle center */
   top: -10px !important;
-  left: -4px !important;
+  left: -4px !important; /* Adjust this value */
   width: 0 !important;
   height: 0 !important;
   border-left: 7px solid transparent !important;
@@ -129,7 +129,7 @@
   position: absolute !important;
   /* CRITICAL: Position relative to needle center */
   bottom: -10px !important;
-  left: -2.5px !important;
+  left: -2.5px !important; /* Adjust this value */
   width: 0 !important;
   height: 0 !important;
   border-left: 5px solid transparent !important;
@@ -140,6 +140,7 @@
 
 /* Compass heading display */
 .compass-heading {
+  position: relative !important;
   background: rgba(0, 0, 0, 0.9) !important;
   padding: 6px 14px !important;
   border-radius: 18px !important;
@@ -209,7 +210,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: rgba(0, 0, 0, 0.85); /* ADDED: Black background */
+  background: rgba(0, 0, 0); /* ADDED: Black background */
   padding: 15px 25px; /* ADDED: Padding */
   border-radius: 50px; /* ADDED: Rounded background */
   backdrop-filter: blur(12px); /* ADDED: Blur effect */
@@ -651,7 +652,7 @@
     gap: 15px;
     padding: 5px 15px;
     height: 60px;
-    min-width: 240px;
+    min-width: 220px;
   }
   
   .compass-section {
