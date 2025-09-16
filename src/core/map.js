@@ -306,16 +306,17 @@ export class MapController {
   }
 
   setRotation(angle) {
-    const mapContainer = document.getElementById('map-container');
+    const mapContainer = document.getElementById('map');
     if (mapContainer) {
       mapContainer.style.transform = `rotate(${-angle}deg)`;
     }
   }
 
   resetRotation() {
-    const mapContainer = document.getElementById('map-container');
+    const mapContainer = document.getElementById('map');
     if (mapContainer) {
       mapContainer.style.transform = 'rotate(0deg)';
     }
   }
+
 }
