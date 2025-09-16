@@ -611,7 +611,7 @@
   
   .compass-needle::before {
     top: -8px !important;
-    left: -6px !important;
+    left: -3px !important;
     border-left-width: 6px !important;
     border-right-width: 6px !important;
     border-bottom-width: 18px !important;
@@ -619,7 +619,7 @@
   
   .compass-needle::after {
     bottom: -8px !important;
-    left: -4px !important;
+    left: -1.5px !important;
     border-left-width: 4px !important;
     border-right-width: 4px !important;
     border-top-width: 14px !important;
